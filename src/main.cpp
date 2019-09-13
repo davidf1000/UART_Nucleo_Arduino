@@ -9,6 +9,7 @@ bool newData = false;
 string data;
 float SharpIr[2];
 
+  
 class nucleo
 {
     public : 
@@ -18,8 +19,19 @@ class nucleo
     {
         mega.putc(DataSent);
     }
+=======
+char getChar()
+
+{
+    uint8_t dataGet;
+    char convert;
+    dataGet = mega.getc();
+    convert = dataGet;
+    return convert;
+>>>>>>> e690ac4311a65dbaa8677a1c0dbc35203b5b4e1f
 }
         char getChar()
+
 
 {
     uint8_t dataGet;
@@ -29,6 +41,9 @@ class nucleo
     return convert;
 }
     void recvWithStartEndMarkers()
+=======
+void recvWithStartEndMarkers()
+
 {
     static bool recvInProgress = false;
     static int ndx = 0;
@@ -65,19 +80,31 @@ class nucleo
             recvInProgress = true;
         }
     }
+<<<<<<< HEAD
     char showNewData()
+=======
+}
+
+char showNewData()
+>>>>>>> e690ac4311a65dbaa8677a1c0dbc35203b5b4e1f
 {
     recvWithStartEndMarkers();
     if (newData == true)
     {
+<<<<<<< HEAD
         pc.printf("DATA Received :");
         pc.printf("%s \n",receivedChars);
+=======
+        //pc.printf("DATA Received :");
+        //pc.printf("%s \n",receivedChars);
+>>>>>>> e690ac4311a65dbaa8677a1c0dbc35203b5b4e1f
         newData = false;
         return receivedChars
     }
 }
 }
 
+<<<<<<< HEAD
     
 }
 
@@ -88,6 +115,16 @@ class nucleo
 
 
 
+=======
+void Sentmega(uint8_t DataSent)
+{
+    if (mega.writeable() > 0)
+    {
+        mega.putc(DataSent);
+    }
+}
+
+>>>>>>> e690ac4311a65dbaa8677a1c0dbc35203b5b4e1f
 /*void getdata(char[50] Sensor)
 {
     switch (Sensor)
@@ -116,11 +153,18 @@ int main()
 {
     pc.printf("Serial receiver");
     wait(2);
+<<<<<<< HEAD
     mega.baud(115200);
 
     while (1)
     {
         nucleo.showNewData();
+=======
+
+    while (1)
+    {
+        pc.printf("%s", showNewData());
+>>>>>>> e690ac4311a65dbaa8677a1c0dbc35203b5b4e1f
         
     }
 }
