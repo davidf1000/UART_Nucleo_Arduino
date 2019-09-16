@@ -65,7 +65,8 @@ class nucleo
             recvInProgress = true;
         }
     }
-    char showNewData()
+}
+    void showNewData()
 {
     recvWithStartEndMarkers();
     if (newData == true)
@@ -73,14 +74,25 @@ class nucleo
         pc.printf("DATA Received :");
         pc.printf("%s \n",receivedChars);
         newData = false;
-        return receivedChars
+        for (int i=0;i<sizeof(receivedChars);i++)
+        {
+            pc.printf("%c ", ChartoInteger(receivedChars[i]))
+        }   
     }
 }
-}
+    int ChartoInteger (char Charinput) {
+    static int Inttemp ;
+    Inttemp = Charinput ;
+    pc.printf("%d",Inttemp);
+    }
 
-    
-}
+    int ConverttoInt (char )
+    {
 
+    }
+
+}
+;
 
 int main()
 {
