@@ -2,14 +2,14 @@
 #include <string>
 
 Serial pc(SERIAL_TX, SERIAL_RX);
-Serial mega(PC_10, PC_11);
+Serial mega(PA_9, PA_10);
 const uint8_t num_limit = 64;
 char receivedChars[num_limit];
 bool newData = false;
 string data;
 float SharpIr[2];
   
-class nucleo
+class UART
 {
     public : 
         void Sentmega(uint8_t DataSent)
@@ -67,74 +67,47 @@ class nucleo
     }
 }
     void showNewData()
-{
+{   
+    static int besar;
     recvWithStartEndMarkers();
     if (newData == true)
     {
         pc.printf("DATA Received :");
         pc.printf("%s \n",receivedChars);
         newData = false;
-        for (int i=0;i<sizeof(receivedChars);i++)
+        for (int i=0;i<strlen(receivedChars);i++)
         {
-            pc.printf("%c ", ChartoInteger(receivedChars[i]))
-        }   
+            pc.printf("%d ", ConverttoInt(receivedChars[i]));
+        }
+
     }
 }
     int ChartoInteger (char Charinput) {
-    static int Inttemp ;
-    Inttemp = Charinput ;
-    pc.printf("%d",Inttemp);
+        static int Inttemp ;
+      Inttemp = Charinput ;
+        return Inttemp;
     }
-
-    int ConverttoInt (char )
+    int ConverttoInt (char Charinput)
     {
-
+        static int Output;
+        Output= ChartoInteger(Charinput)-48;
+        return Output;
     }
 
+    
 }
-;
 
+;
 int main()
 {
     pc.printf("Serial receiver");
     wait(2);
     mega.baud(115200);
-
+    UART nucleo;
     while (1)
     {
         nucleo.showNewData();
+
         
     }
 }
-
-
-
-
-
-
-
-
-
-/*void getdata(char[50] Sensor)
-{
-    switch (Sensor)
-    {
-        "ping" : 
-        Sentmega(1);
-        break;
-        "amg" :
-        Sentmega(2);
-        break;
-        "ir"  :
-        Sentmega(3);
-        break;
-        "line" :
-        Sentmega(4);
-        break;
-        "uvtron":
-        Sentmega(5);
-        break;
-        "cmps":
-        Sentmega(6);
-    }
-}*/
