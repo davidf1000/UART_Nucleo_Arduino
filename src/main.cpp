@@ -5,18 +5,19 @@
 Serial pc(SERIAL_TX, SERIAL_RX);
 Serial mega(PA_9, PA_10);
 const uint8_t num_limit = 64;
-char receivedChars[num_limit];
-char dataClean[num_limit];
-float floatTemp = 0;
 int boolTemp;
-bool newData = false;
 string data;
 float SharpIr[2];
-
+float test;
+int massage;
 class UART
 {
 public:
-    void Sentmega(uint8_t DataSent)
+    char receivedChars[num_limit];
+    char dataClean[num_limit];
+    float floatTemp ;
+    bool newData ;
+    void Sentmega(int DataSent)
     {
         if (mega.writeable() > 0)
         {
@@ -70,27 +71,7 @@ public:
             }
         }
     }
-    void showNewData()
-    {
-        recvWithStartEndMarkers();
-        
-        if (newData == true)
-        {
-            
-            pc.printf("DATA Received :");
-            pc.printf("%s \n", receivedChars);
-            cleanData();
-            pc.printf("cleandata : %s \n", dataClean);
-            newData = false;
-            /*for (int i = 0; i < strlen(receivedChars); i++)
-            {
-                pc.printf("%d ", ConverttoInt(receivedChars[i]));
-            }*/
-            convertdataFix();
-            //pc.printf("Cek float: %.4f \n", floatTemp);
-            floatTemp = 0;
-        }
-    }
+
     int ChartoInteger(char Charinput)
     {
         static int Inttemp;
@@ -119,21 +100,7 @@ public:
         }
         dataClean[j]='\0';
     }
-    void convertdataFix()
-    {
-           // pc.printf("cekkoma : %d \n", cekKoma());
-            static int Stringlength = strlen(dataClean);
-            pc.printf("size : %d \n", Stringlength);
-            for (int i = 0; i < Stringlength; i++)
-            {
-               // pc.printf("besar pangkat : %d \n", cekKoma() - i - 1);
-               // pc.printf("nilai : %f \n",((float)pow((float)10, (float)(cekKoma() - i - 1)) * (float)ConverttoInt(dataClean[i])));
-                floatTemp = floatTemp + ((float)pow((float)10, (float)(cekKoma() - i - 1)) * (float)ConverttoInt(dataClean[i]));
-                //pc.printf("floatTemp sekarang : %f \n", floatTemp);
-            }
-       
-    }
-    int cekKoma()
+        int cekKoma()
     {
         int k = 0;
         while ((receivedChars[k] != '.') and (k < strlen(receivedChars)))
@@ -149,6 +116,68 @@ public:
             return 0;
         }
     }
+    void convertdataFix()
+    {   
+           // pc.printf("cekkoma : %d \n", cekKoma());
+            static int Stringlength ;
+            cleanData();
+            Stringlength = strlen(dataClean);
+            floatTemp=0;
+            if ( cekKoma()>0) 
+            {
+            //pc.printf("cleandata : %s \n", dataClean);
+            //pc.printf("size : %d \n", Stringlength);
+            for (int i = 0; i < Stringlength; i++)
+            {
+                //pc.printf("%d besar pangkat : %d \n",i, cekKoma() - i - 1);
+                //pc.printf("nilai : %f \n",((float)pow((float)10, (float)(cekKoma() - i - 1)) * (float)ConverttoInt(dataClean[i])));
+                floatTemp = floatTemp + ((float)pow((float)10, (float)(cekKoma() - i - 1)) * (float)ConverttoInt(dataClean[i]));
+                //pc.printf("floatTemp sekarang : %f \n", floatTemp);
+            }
+            }
+            else
+            {
+                for (int i = 0; i < Stringlength; i++)
+            {
+                //pc.printf("%d besar pangkat : %d \n",i, cekKoma() - i - 1);
+                //pc.printf("nilai : %f \n",((float)pow((float)10, (float)(Stringlength - i - 1)) * (float)ConverttoInt(dataClean[i])));
+                floatTemp = floatTemp + ((float)pow((float)10, (float)(Stringlength - i - 1)) * (float)ConverttoInt(dataClean[i]));
+                //pc.printf("floatTemp sekarang : %f \n", floatTemp);
+            }
+                }
+       
+    }
+        void showNewData()
+    {
+        while(newData!=true)
+        {
+            Sentmega(massage);
+            recvWithStartEndMarkers();
+        }
+        if (newData == true)
+        {
+            
+           // pc.printf("DATA Received :");
+            //pc.printf("%s \n", receivedChars);
+            
+            //pc.printf("cleandata : %s \n", dataClean);
+            /*for (int i = 0; i < strlen(receivedChars); i++)
+            {
+                pc.printf("%d ", ConverttoInt(receivedChars[i]));
+            }*/
+            pc.printf("Cek float: %.4f \n", floatTemp);
+            convertdataFix();
+            newData = false;
+        }
+    }
+    void updateSensor()
+    {
+        massage=1;
+        showNewData();
+        massage=2;
+        showNewData();
+    }
+
 
 }
 
@@ -159,8 +188,9 @@ int main()
     wait(2);
     mega.baud(115200);
     UART nucleo;
+    nucleo.newData=false;
     while (1)
     {
-        nucleo.showNewData();
+        nucleo.updateSensor();
     }
 }
